@@ -1,6 +1,6 @@
 import yaml
 from sqlalchemy import create_engine, text
-import pandas
+import pandas as pd
 
 def load_credentials(credentials_file):
     """
@@ -16,8 +16,8 @@ class RDSDatabaseConnector:
     Class to handle database operations. 
     """
 
-    def __init__(self, db_dict):
-        credentials_dict = db_dict
+    def __init__(self, credentials_file):
+        self.credentials_dict = load_credentials(credentials_file)
 
     def init_db_engine(self):
         """
@@ -28,15 +28,31 @@ class RDSDatabaseConnector:
 
         return engine
 
-    def extract_dbs_data(self, table):
+    def extract_table_data(self, table):
         """
         return payments data from rds as a pandas dataframe
         """
         engine = self.init_db_engine()
         query = f"SELECT * FROM {table}"
 
-        table_df = pandas.read_sql_query(sql=text(query), conn=engine)
+        table_df = pd.read_sql_query(sql=text(query), conn=engine.connect())
 
         return table_df
 
-        
+    def save_to_csv(self, df):
+        """
+        save pandas df to a csv file for more efficient loading when performing eda
+        """
+        return df.to_csv('loan_payments.csv', index=False)
+    
+
+def main():
+
+    db_connector = RDSDatabaseConnector('credentials.yaml')
+    payments = db_connector.extract_table_data('loan_payments')
+
+    print(payments.shape)
+
+if __name__ == '__main__':
+    main()
+
