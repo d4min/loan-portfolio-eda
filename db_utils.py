@@ -7,9 +7,9 @@ def load_credentials(credentials_file):
     Return dictionary of credentials for connection to database from yaml file. 
     """
     with open(credentials_file, 'r') as db_creds:
-        db_dict = yaml.safe_load(db_creds)
+        credentials_dict = yaml.safe_load(db_creds)
 
-    return db_dict
+    return credentials_dict
 
 class RDSDatabaseConnector:
     """
@@ -43,16 +43,14 @@ class RDSDatabaseConnector:
         """
         save pandas df to a csv file for more efficient loading when performing eda
         """
-        return df.to_csv('loan_payments.csv', index=False)
+        df.to_csv('loan_payments.csv', index=False)
     
-
 def main():
-
     db_connector = RDSDatabaseConnector('credentials.yaml')
-    payments = db_connector.extract_table_data('loan_payments')
-
-    print(payments.shape)
+    payments_df = db_connector.extract_table_data('loan_payments')
+    db_connector.save_to_csv(payments_df)
 
 if __name__ == '__main__':
     main()
+
 
