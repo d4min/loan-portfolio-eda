@@ -44,11 +44,20 @@ class RDSDatabaseConnector:
         save pandas df to a csv file for more efficient loading when performing eda
         """
         df.to_csv('loan_payments.csv', index=False)
+
+    def read_from_csv(self, file):
+        """
+        read in a csv file as a pandas df
+        """
+        with open(file, 'r') as file:
+            df = pd.read_csv(file)
+
+            return df
     
 def main():
     db_connector = RDSDatabaseConnector('credentials.yaml')
-    payments_df = db_connector.extract_table_data('loan_payments')
-    db_connector.save_to_csv(payments_df)
+    payments_df = db_connector.read_from_csv('loan_payments.csv')
+    print(payments_df.info())
 
 if __name__ == '__main__':
     main()
