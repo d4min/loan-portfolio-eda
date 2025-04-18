@@ -73,13 +73,13 @@ Implemented transformation utilities in `transformations.py` to prepare data for
 ```python
 # Convert columns to category type for efficiency
 def convert_to_category(self, column_name):
-    return self.df[column_name].astype('category')
+    self.df[column_name] = self.df[column_name].astype('category')
+    return self.df
 
 # Convert string dates to datetime objects
 def convert_to_datetime(self, column_name):
-    self.df[column_name] = pd.to_datetime(self.df[column_name], format='mixed')
-    self.df[column_name] = self.df[column_name].astype('datetime64[ns]')
-    return self.df[column_name].dt.strftime()
+    self.df[column_name] = pd.to_datetime(self.df[column_name], format='%b-%Y')
+    return self.df
 ```
 
 ### Usage Example:
@@ -88,12 +88,12 @@ def convert_to_datetime(self, column_name):
 transformer = DataTransformer(loan_data)
 
 # Convert categorical columns
-loan_data['grade'] = transformer.convert_to_category('grade')
-loan_data['home_ownership'] = transformer.convert_to_category('home_ownership')
+loan_data = transformer.convert_to_category('grade')
+loan_data = transformer.convert_to_category('home_ownership')
 
 # Convert date columns
-loan_data['issue_date'] = transformer.convert_to_datetime('issue_date')
-loan_data['last_payment_date'] = transformer.convert_to_datetime('last_payment_date')
+loan_data = transformer.convert_to_datetime('issue_date')
+loan_data = transformer.convert_to_datetime('last_payment_date')
 ```
 
 This approach provides:
