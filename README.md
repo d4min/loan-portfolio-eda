@@ -1,6 +1,6 @@
 # Loan Portfolio EDA
 
-## Project Overview
+## Project Overview
 
 This project performs exploratory data analysis on loan portfolio data to enhance loan approval decisions and risk management at a financial institution. 
 
