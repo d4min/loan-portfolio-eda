@@ -4,7 +4,13 @@ import pandas as pd
 
 def load_credentials(credentials_file):
     """
-    Return dictionary of credentials for connection to database from yaml file. 
+    Load database credentials from a YAML file. 
+
+    Args:
+        credentials_file: Path to the YAML file containing database credentials.
+
+    Returns:
+        credentials_dict: A dictionary containing the database credentials.
     """
     with open(credentials_file, 'r') as db_creds:
         credentials_dict = yaml.safe_load(db_creds)
@@ -13,15 +19,24 @@ def load_credentials(credentials_file):
 
 class RDSDatabaseConnector:
     """
-    Class to handle database operations. 
+    A class to manage connections and operations with an RDS database.
     """
 
     def __init__(self, credentials_file):
+        """
+        Initialise the RDSDatabaseConnector with database credentials.
+
+        Args:
+            credentials_file: Path to the YAML file containing database credentials. 
+        """
         self.credentials_dict = load_credentials(credentials_file)
 
     def init_db_engine(self):
         """
-        initalise a SQLAlchemy engine for connection to database
+        Initalise a SQLAlchemy engine for connecting to the database.
+
+        Returns:
+            engine: A SQLAlchemy engine instance for database connections
         """
         creds = self.credentials_dict
         engine = create_engine(f"postgresql+psycopg2://{creds['RDS_USER']}:{creds['RDS_PASSWORD']}@{creds['RDS_HOST']}:{creds['RDS_PORT']}/{creds['RDS_DATABASE']}")
@@ -30,7 +45,13 @@ class RDSDatabaseConnector:
 
     def extract_table_data(self, table):
         """
-        return payments data from rds as a pandas dataframe
+        Extract data from a specified table in the RDS database.
+
+        Args:
+            table: The name of the table to extract data from. 
+
+        Returns:
+            table_df: A DataFrame containing the table data.
         """
         engine = self.init_db_engine()
         query = f"SELECT * FROM {table}"
@@ -41,13 +62,22 @@ class RDSDatabaseConnector:
 
     def save_to_csv(self, df):
         """
-        save pandas df to a csv file for more efficient loading when performing eda
+        Save a DataFrame to a CSV file. 
+
+        Args:
+            df: The DataFrame to be saved to a CSV file. 
         """
         df.to_csv('loan_payments.csv', index=False)
 
     def read_from_csv(self, file):
         """
-        read in a csv file as a pandas df
+        Read a CSV file into a DataFrame.
+
+        Args:  
+            file: The path to the CSV file to be read.
+
+        Returns:
+            df: A DataFrame containing the data from the CSV file. 
         """
         with open(file, 'r') as file:
             df = pd.read_csv(file)
