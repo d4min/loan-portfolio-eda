@@ -1,0 +1,3 @@
+class DataFrameInfo:
+    pass
+
